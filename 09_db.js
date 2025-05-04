@@ -1,30 +1,34 @@
+// Import mongoose library to interact with MongoDB
 const mongoose = require('mongoose');
 
-// Define the MongoDB connection URL
+// MongoDB connection URL (local MongoDB instance)
 const mongoURL = 'mongodb://localhost:27017/hotel';
 
-// Connect to MongoDB
+// Connect to MongoDB with connection options
 mongoose.connect(mongoURL, {
-    useNewUrlParser: true, // Use the new URL parser which means it will parse the URL string
-    useUnifiedTopology: true, // Use the new topology engine which means it will use the new server discovery and monitoring engine
-})
+    useNewUrlParser: true,      // Use the new URL string parser
+    useUnifiedTopology: true,   // Use the new server discovery and monitoring engine
+});
 
-const db = mongoose.connection // Get the connection object
+// Get the default connection object
+const db = mongoose.connection;
 
-// Event listener for connection
+// Bind event listeners to the connection
+
+// On successful connection
 db.on('connected', () => {
-    console.log('MongoDB connected successfully');
-})
+    console.log('MongoDB connected successfully!');
+});
 
-// Event listener for error
-db.on('error', (err)=> {
-    console.log('MongoDB connection error');
-})
+// On connection error
+db.on('error', (err) => {
+    console.error('MongoDB connection error:', err);
+});
 
-// Event listener for disconnection
+// On disconnection
 db.on('disconnected', () => {
-    console.log('MongoDB disconnected');
-})
+    console.log('MongoDB disconnected!');
+});
 
-// Export the connection object
+// Export the db connection object to use in other files
 module.exports = db;
