@@ -2,10 +2,13 @@
 const express = require('express');
 
 // Import the MongoDB connection file (just to ensure DB connects when server runs)
-const db = require('09_db.js');
+const db = require('./09_db.js');
 
 // Import the Person model (data structure)
-const Person = require('./models/Person.js');
+const Person = require('./09_models/Persons.js');
+
+// Import the Menu model (data structure)
+const Menu = require('./09_models/Menu.js');
 
 // Create an Express application
 const app = express();
@@ -19,43 +22,46 @@ app.get('/', function(req, res){
     res.send('Welcome to my hotel... How can I help you?');
 });
 
-// Route: POST /person — to add a new person to the database
-app.post('/person', async (req, res) => {
-    try {
+app.post('/menu', async(req,res) => {
+    try{
         const data = req.body; // Get the data from the request body
 
-        // Create a new instance of the Person model with the request data
-        const newPerson = new Person(data);
+        // Create a new instance of the Menu model with the request data
+        const newMenu = new Menu(data);
 
-        // Save the new person to the database
-        const response = await newPerson.save();
-
-        console.log('Person saved:', response); // Log the saved person to the console
-
+        // Save the new menu to the database
+        const response = await newMenu.save();
+        console.log('Menu saved:', response); // Log the saved menu to the console
         // Send a success response to the client
         res.status(201).json(response);
-    } catch (err) {
-        console.error('Error saving person:', err);
-
+    }
+    catch(err){
+        console.error('Error saving menu:', err);
         // Send an error response if something goes wrong
         res.status(500).json({ error: 'Internal server error' });
     }
-});
+})
 
-app.get('/person', async (req, res) => {
-    try {
-        // Fetch all persons from the database
-        const persons = await Person.find({});
+app.get('/menu', async(req,res) => {
+    try{
+        // Fetch all menus from the database
+        const menus = await Menu.find({});
 
-        // Send the list of persons as a response
-        res.status(200).json(persons);
-    } catch (err) {
-        console.error('Error fetching persons:', err);
-
+        // Send the list of menus as a response
+        res.status(200).json(menus);
+    }
+    catch(err){
+        console.error('Error fetching menus:', err);
         // Send an error response if something goes wrong
         res.status(500).json({ error: 'Internal server error' });
     }
-});
+}
+);
+
+// import the person routes from the personRoutes.js file
+const personRoutes = require('./routes/personRoutes.js');
+// Use the person routes for any requests to /person
+app.use('/person', personRoutes);
 
 // Start the server on port 3000
 app.listen(3000, () => {
