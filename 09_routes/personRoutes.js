@@ -57,4 +57,42 @@ router.get('/:workType', async (req, res) => {
     }   
 });
 
+router.put('/:id', async (req, res) => {
+    try {
+        const personId = req.params.id; // Get the person ID from the request parameters
+        const updatedData = req.body; // Get the updated data from the request body
+
+        const response = await Person.findByIdAndUpdate(personId, updatedData, { 
+            new: true,
+            runValidators: true 
+        }); // Update the person in the database
+
+        if (!response) {
+            return res.status(404).json({ error: 'Person not found' }); // Send an error response if the person is not found
+        }
+        console.log('Person updated:', response); // Log the updated person to the console
+    }
+    catch (err) {
+        console.error('Error updating person:', err); // Log the error to the console
+        res.status(500).json({ error: 'Internal server error' }); // Send an error response if something goes wrong
+    }
+})
+
+router.delete('/:id', async (req, res) => { 
+    try {
+        const personId = req.params.id; // Get the person ID from the request parameters
+
+        const response = await Person.findByIdAndDelete(personId); // Delete the person from the database
+
+        if (!response) {
+            return res.status(404).json({ error: 'Person not found' }); // Send an error response if the person is not found
+        }
+        console.log('Person deleted:', response); // Log the deleted person to the console
+        res.status(200).json({ message: 'Person deleted successfully' }); // Send a success response
+    } catch (err) {
+        console.error('Error deleting person:', err); // Log the error to the console
+        res.status(500).json({ error: 'Internal server error' }); // Send an error response if something goes wrong
+    }
+});
+
 module.exports = router; // Export the router to use in other files
